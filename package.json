@@ -2,12 +2,12 @@
   "name": "mysql-mcp-python-server",
   "version": "1.0.0",
   "description": "A MySQL MCP server that provides access to MySQL databases using Python",
-  "main": "run.js",
+  "main": "index.js",
   "bin": {
-    "mysql-mcp-python-server": "./run.js"
+    "mysql-mcp-python-server": "./index.js"
   },
   "scripts": {
-    "start": "node run.js",
+    "start": "node index.js",
     "install-requirements": "pip install -r requirements.txt"
   },
   "mcp": {

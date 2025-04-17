@@ -33,14 +33,14 @@ settings:
 
 startCommand:
   type: "stdio"
-  command: "node run.js"
+  command: "node index.js"
   configSchema:
     type: "object"
     properties: {}
     additionalProperties: false
   commandFunction: |
     function buildCommand(config) {
-      return ["node", "run.js"];
+      return ["node", "index.js"];
     }
   environment:
     SMITHERY_SETTING_HOST: "{{ settings.host }}"

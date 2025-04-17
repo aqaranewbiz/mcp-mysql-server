@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN pip install --no-cache-dir mysql-connector-python>=8.0.0
 
 # Make scripts executable
-RUN chmod +x mcp_server.py run.js
+RUN chmod +x mcp_server.py index.js
 
 # Create .local marker file
 RUN echo "This is a local MCP server" > .local
@@ -28,4 +28,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 14000
 
 # Run the server
-CMD ["node", "run.js"] 
+CMD ["node", "index.js"] 
