@@ -31,7 +31,16 @@ settings:
       - user
       - password
 
-startCommand: "node run.js"
+startCommand:
+  name: "Start MySQL MCP Server"
+  command: "node run.js"
+  background: true
+  environment:
+    SMITHERY_SETTING_HOST: "{{ settings.host }}"
+    SMITHERY_SETTING_PORT: "{{ settings.port }}"
+    SMITHERY_SETTING_USER: "{{ settings.user }}"
+    SMITHERY_SETTING_PASSWORD: "{{ settings.password }}"
+    SMITHERY_SETTING_DATABASE: "{{ settings.database }}"
 
 start:
   type: "stdio"
