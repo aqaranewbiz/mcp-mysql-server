@@ -32,9 +32,16 @@ settings:
       - password
 
 startCommand:
-  name: "Start MySQL MCP Server"
+  type: "stdio"
   command: "node run.js"
-  background: true
+  configSchema:
+    type: "object"
+    properties: {}
+    additionalProperties: false
+  commandFunction: |
+    function buildCommand(config) {
+      return ["node", "run.js"];
+    }
   environment:
     SMITHERY_SETTING_HOST: "{{ settings.host }}"
     SMITHERY_SETTING_PORT: "{{ settings.port }}"
