@@ -31,6 +31,8 @@ settings:
       - user
       - password
 
+startCommand: "node run.js"
+
 start:
   type: "stdio"
   command: "node run.js"
