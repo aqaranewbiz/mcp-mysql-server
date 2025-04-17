@@ -42,24 +42,6 @@ startCommand:
     SMITHERY_SETTING_PASSWORD: "{{ settings.password }}"
     SMITHERY_SETTING_DATABASE: "{{ settings.database }}"
 
-start:
-  type: "stdio"
-  command: "node run.js"
-  configSchema:
-    type: "object"
-    properties: {}
-    additionalProperties: false
-  commandFunction: |
-    function buildCommand(config) {
-      return ["node", "run.js"];
-    }
-  environment:
-    SMITHERY_SETTING_HOST: "{{ settings.host }}"
-    SMITHERY_SETTING_PORT: "{{ settings.port }}"
-    SMITHERY_SETTING_USER: "{{ settings.user }}"
-    SMITHERY_SETTING_PASSWORD: "{{ settings.password }}"
-    SMITHERY_SETTING_DATABASE: "{{ settings.database }}"
-
 deployment:
   type: "docker"
   dockerfile: "./Dockerfile"
