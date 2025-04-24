@@ -3,6 +3,13 @@ name: "mysql-mcp-python-server"
 description: "A MySQL MCP server that provides access to MySQL databases using Python"
 logo: "./logo.png"
 
+local:
+  enabled: true
+  installation:
+    type: "npm"
+    package: "@mysql-mcp/python-server"
+    binary: "mysql-mcp-server"
+
 settings:
   configurable: true
   schema:
@@ -74,12 +81,18 @@ deployment:
   type: "docker"
   dockerfile: "./Dockerfile"
   healthCheck:
-    path: "/"
+    type: "http"
+    path: "/health"
+    port: 14000
     timeout: 30
   resources:
     memory: "512Mi"
     cpu: "0.5"
-    
+  websocket:
+    enabled: true
+    reconnect: true
+    timeout: 300000
+
 tools:
   connect_db:
     description: "Connect to a MySQL database"

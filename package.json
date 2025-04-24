@@ -1,66 +1,27 @@
 {
-  "name": "mysql-mcp-python-server",
+  "name": "@mysql-mcp/python-server",
   "version": "1.0.0",
   "description": "A MySQL MCP server that provides access to MySQL databases using Python",
   "main": "index.js",
   "bin": {
-    "mysql-mcp-python-server": "./index.js"
+    "mysql-mcp-server": "./run.js"
   },
   "scripts": {
-    "start": "node index.js",
-    "install-requirements": "pip install -r requirements.txt"
-  },
-  "mcp": {
-    "type": "node",
-    "command": "mysql-mcp-python-server"
-  },
-  "settings": {
-    "configurable": true,
-    "schema": {
-      "type": "object",
-      "properties": {
-        "host": {
-          "type": "string",
-          "description": "MySQL server host address",
-          "default": "localhost"
-        },
-        "port": {
-          "type": "integer",
-          "description": "MySQL server port",
-          "default": 3306
-        },
-        "user": {
-          "type": "string",
-          "description": "MySQL username"
-        },
-        "password": {
-          "type": "string",
-          "description": "MySQL password",
-          "format": "password"
-        },
-        "database": {
-          "type": "string",
-          "description": "MySQL database name (optional)"
-        }
-      },
-      "required": [
-        "host",
-        "user",
-        "password"
-      ]
-    }
+    "start": "node run.js",
+    "postinstall": "pip install -r requirements.txt"
   },
   "keywords": [
-    "mysql",
     "mcp",
-    "smithery",
+    "mysql",
     "database",
-    "python"
+    "smithery"
   ],
-  "author": "Aqara",
+  "author": "",
   "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
   "engines": {
     "node": ">=14.0.0"
-  },
-  "dependencies": {}
+  }
 } 
