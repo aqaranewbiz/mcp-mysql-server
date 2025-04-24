@@ -515,70 +515,59 @@ def handle_request(request: str) -> Dict:
         }
 
 def main():
-    """Main function to run the server"""
-    global running
+    """Main entry point"""
+    global running, initialized
     
-    # Register signal handlers
+    # Set up signal handlers
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     
     # Start keep-alive thread
-    keep_alive_thread = threading.Thread(target=keep_alive_thread_func, daemon=True)
+    keep_alive_thread = threading.Thread(target=keep_alive_thread_func)
+    keep_alive_thread.daemon = True
     keep_alive_thread.start()
     
-    # Print startup message
-    logger.info("MySQL MCP server started and waiting for requests...")
+    # Get database connection info from environment variables
+    host = os.environ.get('MYSQL_HOST')
+    user = os.environ.get('MYSQL_USER')
+    password = os.environ.get('MYSQL_PASSWORD')
+    database = os.environ.get('MYSQL_DATABASE')
+    port = int(os.environ.get('MYSQL_PORT', '3306'))
     
-    # Main loop to read from stdin and process requests
-    while running:
-        try:
-            # Read a line from stdin
-            line = sys.stdin.readline()
-            
-            # Check if stdin is closed
-            if not line:
-                logger.warning("End of input stream detected. Exiting...")
-                running = False
-                break
-                
-            # Handle empty lines
-            line = line.strip()
-            if not line:
-                continue
-                
-            # Process the request
-            logger.debug(f"Raw request: {line}")
-            response = handle_request(line)
-            
-            # Send the response
-            response_json = json.dumps(response)
-            print(response_json, flush=True)
-            logger.debug(f"Response sent")
-            
-        except KeyboardInterrupt:
-            logger.info("Keyboard interrupt received, exiting...")
-            running = False
-            break
-        except Exception as e:
-            logger.error(f"Unexpected error in main loop: {e}")
-            traceback.print_exc()
-            
-            # Try to send an error response
+    if not all([host, user, password]):
+        logger.error("Required environment variables MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD not set")
+        sys.exit(1)
+    
+    try:
+        # Connect to database
+        result = connect_db(host=host, port=port, user=user, password=password, database=database)
+        if not result.get('success'):
+            logger.error(f"Failed to connect to database: {result.get('error')}")
+            sys.exit(1)
+        initialized = True
+        
+        # Main loop
+        while running:
             try:
-                error_response = {
-                    "jsonrpc": "2.0",
-                    "id": None,
-                    "error": {
-                        "code": -32603,
-                        "message": f"Internal error: {str(e)}"
-                    }
-                }
-                print(json.dumps(error_response), flush=True)
-            except:
-                pass
-    
-    # Cleanup before exit
-    cleanup()
+                line = sys.stdin.readline()
+                if not line:
+                    break
+                    
+                request = json.loads(line)
+                response = handle_request(request)
+                
+                if response:
+                    print(json.dumps(response), flush=True)
+                    
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid JSON received: {e}")
+            except Exception as e:
+                logger.error(f"Error processing request: {e}\n{traceback.format_exc()}")
+                
+    except KeyboardInterrupt:
+        logger.info("Received keyboard interrupt")
+    finally:
+        cleanup()
 
 if __name__ == "__main__":
     main() 

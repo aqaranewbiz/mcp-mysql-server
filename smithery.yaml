@@ -32,22 +32,43 @@ settings:
       - password
 
 startCommand:
-  type: "stdio"
-  command: "node index.js"
+  type: stdio
   configSchema:
-    type: "object"
-    properties: {}
-    additionalProperties: false
-  commandFunction: |
-    function buildCommand(config) {
-      return ["node", "index.js"];
-    }
-  environment:
-    SMITHERY_SETTING_HOST: "{{ settings.host }}"
-    SMITHERY_SETTING_PORT: "{{ settings.port }}"
-    SMITHERY_SETTING_USER: "{{ settings.user }}"
-    SMITHERY_SETTING_PASSWORD: "{{ settings.password }}"
-    SMITHERY_SETTING_DATABASE: "{{ settings.database }}"
+    type: object
+    required:
+      - mysqlHost
+      - mysqlUser
+      - mysqlPassword
+      - mysqlDatabase
+    properties:
+      mysqlHost:
+        type: string
+        description: Hostname for the MySQL server
+      mysqlUser:
+        type: string
+        description: MySQL user name
+      mysqlPassword:
+        type: string
+        description: MySQL user's password
+      mysqlDatabase:
+        type: string
+        description: MySQL database name
+  commandFunction: |-
+    (config) => ({
+      command: 'python3',
+      args: ['mcp_server.py'],
+      env: {
+        MYSQL_HOST: config.mysqlHost,
+        MYSQL_USER: config.mysqlUser,
+        MYSQL_PASSWORD: config.mysqlPassword,
+        MYSQL_DATABASE: config.mysqlDatabase
+      }
+    })
+  exampleConfig:
+    mysqlHost: localhost
+    mysqlUser: example_user
+    mysqlPassword: example_password
+    mysqlDatabase: example_db
 
 deployment:
   type: "docker"

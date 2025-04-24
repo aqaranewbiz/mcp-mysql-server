@@ -125,6 +125,7 @@ function startPythonServer(pythonCmd) {
     MYSQL_PASSWORD: process.env.SMITHERY_SETTING_PASSWORD || '',
     MYSQL_DATABASE: process.env.SMITHERY_SETTING_DATABASE || '',
     PYTHONUNBUFFERED: '1',  // Ensure Python output is not buffered
+    DEBUG: '1'  // Enable debug logging
   };
   
   // Log the configuration (masking sensitive data)
@@ -134,10 +135,14 @@ function startPythonServer(pythonCmd) {
   - User: ${env.MYSQL_USER}
   - Database: ${env.MYSQL_DATABASE || '(none)'}
   - Password: ${env.MYSQL_PASSWORD ? '*****' : '(none)'}
+  - Environment variables: ${Object.keys(process.env).filter(k => k.startsWith('SMITHERY')).join(', ')}
 `);
   
   // Launch the Python process
-  const pythonProcess = spawn(pythonCmd, [mcp_server_path], { env });
+  const pythonProcess = spawn(pythonCmd, [mcp_server_path], { 
+    env,
+    stdio: ['pipe', 'pipe', process.stderr]  // Redirect stdout to process.stdout
+  });
   
   // Connect the Python process's stdout to Node's stdout (for MCP protocol messages)
   pythonProcess.stdout.pipe(process.stdout);
