@@ -1,6 +1,7 @@
-# Smithery configuration file for MySQL MCP Server
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
 name: "mysql-mcp-python-server"
 description: "A MySQL MCP server that provides access to MySQL databases using Python"
+version: "1.0.0"
 logo: "./logo.png"
 
 local:
@@ -15,33 +16,33 @@ settings:
   schema:
     type: object
     properties:
-      host:
+      mysqlHost:
         type: string
         description: "MySQL server host address"
         default: "localhost"
-      port:
+      mysqlPort:
         type: integer
         description: "MySQL server port"
         default: 3306
-      user:
+      mysqlUser:
         type: string
         description: "MySQL username"
-      password:
+      mysqlPassword:
         type: string
         description: "MySQL password"
         format: password
-      database:
+      mysqlDatabase:
         type: string
-        description: "MySQL database name (optional)"
+        description: "MySQL database name"
     required:
-      - host
-      - user
-      - password
+      - mysqlHost
+      - mysqlUser
+      - mysqlPassword
+      - mysqlDatabase
 
 startCommand:
   type: stdio
   configSchema:
-    # JSON Schema defining the configuration options for the MCP.
     type: object
     required:
       - mysqlHost
@@ -51,36 +52,44 @@ startCommand:
     properties:
       mysqlHost:
         type: string
-        description: Hostname for the MySQL server
+        description: "MySQL server host address"
+        default: "localhost"
+      mysqlPort:
+        type: integer
+        description: "MySQL server port"
+        default: 3306
       mysqlUser:
         type: string
-        description: MySQL user name
+        description: "MySQL username"
       mysqlPassword:
         type: string
-        description: MySQL user's password
+        description: "MySQL password"
+        format: password
       mysqlDatabase:
         type: string
-        description: MySQL database name
+        description: "MySQL database name"
   commandFunction: |-
     (config) => ({
       command: 'node',
       args: ['run.js'],
       env: {
         MYSQL_HOST: config.mysqlHost,
+        MYSQL_PORT: config.mysqlPort || '3306',
         MYSQL_USER: config.mysqlUser,
         MYSQL_PASSWORD: config.mysqlPassword,
         MYSQL_DATABASE: config.mysqlDatabase
       }
     })
   exampleConfig:
-    mysqlHost: localhost
-    mysqlUser: example_user
-    mysqlPassword: example_password
-    mysqlDatabase: example_db
+    mysqlHost: "localhost"
+    mysqlUser: "example_user"
+    mysqlPassword: "example_password"
+    mysqlDatabase: "example_db"
 
 deployment:
   type: "docker"
   dockerfile: "./Dockerfile"
+  dockerBuildPath: "."
   healthCheck:
     type: "http"
     path: "/health"
@@ -116,11 +125,12 @@ tools:
           format: password
         database:
           type: string
-          description: "Database name (optional)"
+          description: "Database name"
       required:
         - host
         - user
         - password
+        - database
   list_databases:
     description: "List all accessible databases"
     parameters:
