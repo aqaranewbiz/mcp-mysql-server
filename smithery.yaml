@@ -1,168 +1,38 @@
-# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
-name: "mysql-mcp-python-server"
-description: "A MySQL MCP server that provides access to MySQL databases using Python"
-version: "1.0.0"
-logo: "./logo.png"
-
-local:
-  enabled: true
-  installation:
-    type: "npm"
-    package: "@mysql-mcp/python-server"
-    binary: "mysql-mcp-server"
-
-settings:
-  configurable: true
-  schema:
-    type: object
-    properties:
-      mysqlHost:
-        type: string
-        description: "MySQL server host address"
-        default: "localhost"
-      mysqlPort:
-        type: integer
-        description: "MySQL server port"
-        default: 3306
-      mysqlUser:
-        type: string
-        description: "MySQL username"
-      mysqlPassword:
-        type: string
-        description: "MySQL password"
-        format: password
-      mysqlDatabase:
-        type: string
-        description: "MySQL database name"
-    required:
-      - mysqlHost
-      - mysqlUser
-      - mysqlPassword
-      - mysqlDatabase
-
 startCommand:
   type: stdio
   configSchema:
     type: object
-    required:
-      - mysqlHost
-      - mysqlUser
-      - mysqlPassword
-      - mysqlDatabase
     properties:
       mysqlHost:
         type: string
-        description: "MySQL server host address"
-        default: "localhost"
+        description: "MySQL host address"
       mysqlPort:
         type: integer
-        description: "MySQL server port"
+        description: "MySQL port number"
         default: 3306
       mysqlUser:
         type: string
         description: "MySQL username"
       mysqlPassword:
         type: string
-        description: "MySQL password"
+        description: "MySQL user password"
         format: password
       mysqlDatabase:
         type: string
-        description: "MySQL database name"
-  commandFunction: |-
+        description: "Name of the MySQL database to connect to"
+    required:
+      - mysqlHost
+      - mysqlUser
+      - mysqlPassword
+  commandFunction: |
     (config) => ({
-      command: 'node',
-      args: ['run.js'],
-      env: {
-        MYSQL_HOST: config.mysqlHost,
-        MYSQL_PORT: config.mysqlPort || '3306',
-        MYSQL_USER: config.mysqlUser,
-        MYSQL_PASSWORD: config.mysqlPassword,
-        MYSQL_DATABASE: config.mysqlDatabase
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "env": {
+        "MYSQL_HOST": config.mysqlHost,
+        "MYSQL_PORT": config.mysqlPort.toString(),
+        "MYSQL_USER": config.mysqlUser,
+        "MYSQL_PASSWORD": config.mysqlPassword,
+        "MYSQL_DATABASE": config.mysqlDatabase || ""
       }
-    })
-  exampleConfig:
-    mysqlHost: "localhost"
-    mysqlUser: "example_user"
-    mysqlPassword: "example_password"
-    mysqlDatabase: "example_db"
-
-deployment:
-  type: "docker"
-  dockerfile: "./Dockerfile"
-  dockerBuildPath: "."
-  healthCheck:
-    type: "http"
-    path: "/health"
-    port: 14000
-    timeout: 30
-  resources:
-    memory: "512Mi"
-    cpu: "0.5"
-  websocket:
-    enabled: true
-    reconnect: true
-    timeout: 300000
-
-tools:
-  connect_db:
-    description: "Connect to a MySQL database"
-    parameters:
-      properties:
-        host:
-          type: string
-          description: "MySQL server hostname or IP address"
-          default: "localhost"
-        port:
-          type: integer
-          description: "MySQL server port"
-          default: 3306
-        user:
-          type: string
-          description: "MySQL username"
-        password:
-          type: string
-          description: "MySQL password"
-          format: password
-        database:
-          type: string
-          description: "Database name"
-      required:
-        - host
-        - user
-        - password
-        - database
-  list_databases:
-    description: "List all accessible databases"
-    parameters:
-      properties: {}
-  list_tables:
-    description: "List all tables in a database"
-    parameters:
-      properties:
-        database:
-          type: string
-          description: "Database name (optional, uses default if connected)"
-  describe_table:
-    description: "Show the schema for a table"
-    parameters:
-      properties:
-        table:
-          type: string
-          description: "Table name"
-        database:
-          type: string
-          description: "Database name (optional, uses default if connected)"
-      required:
-        - table
-  execute_query:
-    description: "Execute a read-only SQL query"
-    parameters:
-      properties:
-        query:
-          type: string
-          description: "SQL query (only SELECT, SHOW, DESCRIBE, and EXPLAIN allowed)"
-        database:
-          type: string
-          description: "Database name (optional, uses default if connected)"
-      required:
-        - query 
+    }) 

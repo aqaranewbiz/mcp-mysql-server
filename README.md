@@ -1,123 +1,69 @@
-# MySQL MCP Server for Smithery (Python)
+# MySQL MCP Server
 
-A MySQL connector for Smithery that allows you to connect to your MySQL database directly from Smithery, built with Python.
+A Model Context Protocol (MCP) server that enables secure interaction with MySQL databases. This server allows AI assistants to list tables, read data, and execute read-only SQL queries through a controlled interface.
 
 ## Features
 
-- **Connect to MySQL Databases**: Configure and connect to MySQL databases
-- **List Databases**: View all accessible databases
-- **List Tables**: View all tables in a specified database
-- **Describe Tables**: Get detailed schema information for tables
-- **Execute Queries**: Run read-only SQL queries (SELECT, SHOW, DESCRIBE, EXPLAIN)
-- **Security**: Built-in query validation ensures only read-only operations are allowed
+- Read-only access to MySQL databases
+- Connection pooling for efficient resource management
+- Secure query validation
+- JSON-RPC 2.0 protocol support
+- Comprehensive logging
+- Docker support
 
-## Installation in Smithery
+## Available Tools
 
-After adding the MCP server in Smithery, you'll be able to enter your MySQL database credentials:
+1. `list_databases`: List all accessible databases
+2. `list_tables`: List all tables in a database
+3. `describe_table`: Show the schema for a table
+4. `execute_query`: Execute read-only SQL queries (SELECT, SHOW, DESCRIBE only)
 
-- **Host**: Database server hostname (default: localhost)
-- **Port**: Database server port (default: 3306)
-- **User**: Your MySQL username
-- **Password**: Your MySQL password
-- **Database**: (Optional) The specific database to connect to
+## Configuration
 
-## Manual Installation
+The server requires the following environment variables:
 
-1. Clone this repository:
+- `MYSQL_HOST`: MySQL server hostname
+- `MYSQL_PORT`: MySQL server port (default: 3306)
+- `MYSQL_USER`: MySQL username
+- `MYSQL_PASSWORD`: MySQL user password
+- `MYSQL_DATABASE`: (Optional) Default database name
+
+## Installation
+
+1. Install dependencies:
 ```bash
-git clone https://github.com/aqaralife/mysql-mcp-python-server.git
-```
-
-2. Install dependencies:
-```bash
-cd mysql-mcp-python-server
-npm install
 pip install -r requirements.txt
 ```
 
-3. Make the scripts executable (Unix/Linux/Mac):
-```bash
-chmod +x mcp_server.py run.js
-```
-
-## Manual Usage
-
-To start the server:
-```bash
-node run.js
-```
-
-Or, directly run the Python script:
+2. Run the server:
 ```bash
 python mcp_server.py
 ```
 
-## Available Tools
+## Docker Usage
 
-### connect_db
-Establishes a connection to a MySQL database.
+Build the image:
+```bash
+docker build -t mysql-mcp-server .
+```
 
-**Parameters:**
-- **host**: Database server hostname
-- **port**: Database server port
-- **user**: Database username
-- **password**: Database password
-- **database**: (Optional) Database name
-
-### list_databases
-Lists all accessible databases.
-
-**Parameters:** None
-
-### list_tables
-Lists all tables in a database.
-
-**Parameters:**
-- **database**: (Optional) Database name, uses default if connected
-
-### describe_table
-Shows the schema for a table.
-
-**Parameters:**
-- **table**: Table name
-- **database**: (Optional) Database name, uses default if connected
-
-### execute_query
-Executes a read-only SQL query.
-
-**Parameters:**
-- **query**: SQL query (only SELECT, SHOW, DESCRIBE, and EXPLAIN allowed)
-- **database**: (Optional) Database name, uses default if connected
+Run the container:
+```bash
+docker run -e MYSQL_HOST=host.docker.internal \
+           -e MYSQL_PORT=3306 \
+           -e MYSQL_USER=your_user \
+           -e MYSQL_PASSWORD=your_password \
+           -e MYSQL_DATABASE=your_database \
+           mysql-mcp-server
+```
 
 ## Security
 
-The server includes built-in validation to ensure only read-only operations are permitted:
-
-- Only SELECT, SHOW, DESCRIBE, and EXPLAIN queries are allowed
-- Queries containing SQL commands like INSERT, UPDATE, DELETE, DROP, etc. are automatically rejected
-- Multiple statements in a single query (separated by semicolons) are not allowed
-
-## Troubleshooting
-
-If you encounter issues:
-
-1. **Python Not Found**: The server will automatically detect `python3` or `python`. If neither works, ensure Python is installed and in your PATH.
-
-2. **Missing Modules**: The server will attempt to install required packages automatically. If this fails, manually run:
-   ```bash
-   pip install mysql-connector-python>=8.0.0
-   ```
-
-3. **Connection Issues**: Verify your database credentials and ensure the MySQL server is running and accessible.
-
-4. **Smithery Connection Issues**: Make sure the settings in Smithery are correctly configured with your database credentials.
-
-5. **Server Unresponsive**: Check the log output in Smithery's console for errors.
+- Only read-only SQL commands are allowed (SELECT, SHOW, DESCRIBE, EXPLAIN)
+- All queries are validated before execution
+- Connection pooling prevents resource exhaustion
+- Sensitive information is handled securely
 
 ## License
 
-MIT
-
-## Contact
-
-If you have any questions, please create an issue. 
+MIT License 
