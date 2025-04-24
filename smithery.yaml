@@ -5,21 +5,27 @@ startCommand:
     properties:
       mysqlHost:
         type: string
-        description: "MySQL host address"
+        description: "MySQL host address (use 'localhost' for local database, or your server's IP/hostname)"
+        pattern: "^[a-zA-Z0-9.-]+$"
       mysqlPort:
         type: integer
-        description: "MySQL port number"
+        description: "MySQL port number (default: 3306)"
         default: 3306
+        minimum: 1
+        maximum: 65535
       mysqlUser:
         type: string
-        description: "MySQL username"
+        description: "MySQL username (must have SELECT permissions)"
+        minLength: 1
       mysqlPassword:
         type: string
-        description: "MySQL user password"
+        description: "MySQL user password (will be securely handled)"
         format: password
+        minLength: 1
       mysqlDatabase:
         type: string
-        description: "Name of the MySQL database to connect to"
+        description: "Name of the MySQL database to connect to (optional)"
+        pattern: "^[a-zA-Z0-9_-]*$"
     required:
       - mysqlHost
       - mysqlUser
@@ -35,4 +41,8 @@ startCommand:
         "MYSQL_PASSWORD": config.mysqlPassword,
         "MYSQL_DATABASE": config.mysqlDatabase || ""
       }
-    }) 
+    })
+  metadata:
+    name: "MySQL MCP Server"
+    description: "Secure MySQL database access through Model Context Protocol"
+    version: "1.0.0" 
