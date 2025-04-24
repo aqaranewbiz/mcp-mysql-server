@@ -41,6 +41,7 @@ settings:
 startCommand:
   type: stdio
   configSchema:
+    # JSON Schema defining the configuration options for the MCP.
     type: object
     required:
       - mysqlHost
@@ -62,8 +63,8 @@ startCommand:
         description: MySQL database name
   commandFunction: |-
     (config) => ({
-      command: 'python3',
-      args: ['mcp_server.py'],
+      command: 'node',
+      args: ['run.js'],
       env: {
         MYSQL_HOST: config.mysqlHost,
         MYSQL_USER: config.mysqlUser,
