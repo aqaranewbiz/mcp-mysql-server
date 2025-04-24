@@ -1,5 +1,7 @@
 # MySQL MCP Server for Smithery (Python)
 
+[![smithery badge](https://smithery.ai/badge/@aqaranewbiz/mcp-mysql-server)](https://smithery.ai/server/@aqaranewbiz/mcp-mysql-server)
+
 A MySQL connector for Smithery that allows you to connect to your MySQL database directly from Smithery, built with Python.
 
 ## Features
@@ -20,6 +22,14 @@ After adding the MCP server in Smithery, you'll be able to enter your MySQL data
 - **User**: Your MySQL username
 - **Password**: Your MySQL password
 - **Database**: (Optional) The specific database to connect to
+
+## Installing via Smithery
+
+To install MySQL Connector Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@aqaranewbiz/mcp-mysql-server):
+
+```bash
+npx -y @smithery/cli install @aqaranewbiz/mcp-mysql-server --client claude
+```
 
 ## Manual Installation
 
