@@ -1,3 +1,45 @@
+# Smithery configuration file for MySQL MCP Server
+name: "mysql-mcp-python-server"
+description: "A MySQL MCP server that provides secure read-only access to MySQL databases"
+version: "1.0.0"
+logo: "./logo.png"
+
+local:
+  enabled: true
+  installation:
+    type: "npm"
+    package: "@mysql-mcp/python-server"
+    binary: "mysql-mcp-server"
+
+settings:
+  configurable: true
+  schema:
+    type: object
+    properties:
+      mysqlHost:
+        type: string
+        description: "MySQL server host address"
+        default: "localhost"
+      mysqlPort:
+        type: integer
+        description: "MySQL server port"
+        default: 3306
+      mysqlUser:
+        type: string
+        description: "MySQL username"
+      mysqlPassword:
+        type: string
+        description: "MySQL password"
+        format: password
+      mysqlDatabase:
+        type: string
+        description: "MySQL database name"
+    required:
+      - mysqlHost
+      - mysqlUser
+      - mysqlPassword
+      - mysqlDatabase
+
 startCommand:
   type: stdio
   configSchema:
@@ -42,7 +84,96 @@ startCommand:
         "MYSQL_DATABASE": config.mysqlDatabase || ""
       }
     })
-  metadata:
-    name: "MySQL MCP Server"
-    description: "Secure MySQL database access through Model Context Protocol"
-    version: "1.0.0" 
+  exampleConfig:
+    mysqlHost: "localhost"
+    mysqlUser: "example_user"
+    mysqlPassword: "example_password"
+    mysqlDatabase: "example_db"
+
+deployment:
+  type: "docker"
+  dockerfile: "./Dockerfile"
+  dockerBuildPath: "."
+  healthCheck:
+    type: "http"
+    path: "/health"
+    port: 14000
+    timeout: 30
+  resources:
+    memory: "512Mi"
+    cpu: "0.5"
+  websocket:
+    enabled: true
+    reconnect: true
+    timeout: 300000
+
+tools:
+  connect_db:
+    description: "Connect to a MySQL database"
+    parameters:
+      properties:
+        host:
+          type: string
+          description: "MySQL server hostname or IP address"
+          default: "localhost"
+        port:
+          type: integer
+          description: "MySQL server port"
+          default: 3306
+        user:
+          type: string
+          description: "MySQL username"
+        password:
+          type: string
+          description: "MySQL password"
+          format: password
+        database:
+          type: string
+          description: "Database name"
+      required:
+        - host
+        - user
+        - password
+        - database
+  list_databases:
+    description: "List all accessible databases"
+    parameters:
+      properties: {}
+  list_tables:
+    description: "List all tables in a database"
+    parameters:
+      properties:
+        database:
+          type: string
+          description: "Database name (optional)"
+  describe_table:
+    description: "Show the schema for a table"
+    parameters:
+      properties:
+        table:
+          type: string
+          description: "Table name"
+        database:
+          type: string
+          description: "Database name (optional)"
+      required:
+        - table
+  execute_query:
+    description: "Execute a read-only SQL query"
+    parameters:
+      properties:
+        query:
+          type: string
+          description: "SQL query (SELECT, SHOW, DESCRIBE only)"
+        database:
+          type: string
+          description: "Database name (optional)"
+      required:
+        - query
+
+metadata:
+  name: "MySQL MCP Server"
+  description: "Secure MySQL database access through Model Context Protocol"
+  version: "1.0.0"
+  author: "Smithery AI"
+  license: "MIT" 
