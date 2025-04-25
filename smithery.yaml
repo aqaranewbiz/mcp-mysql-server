@@ -1,6 +1,6 @@
 # Smithery configuration file for MySQL MCP Server
 name: "mysql-mcp-python-server"
-description: "MySQL MCP server for secure database access"
+description: "MySQL MCP server for database access"
 version: "1.0.0"
 logo: "./logo.png"
 
@@ -50,7 +50,7 @@ startCommand:
         description: "MySQL host address"
       mysqlPort:
         type: integer
-        description: "MySQL port number"
+        description: "MySQL port"
         default: 3306
       mysqlUser:
         type: string
@@ -61,7 +61,7 @@ startCommand:
         format: password
       mysqlDatabase:
         type: string
-        description: "Database name (optional)"
+        description: "Database name"
     required:
       - mysqlHost
       - mysqlUser
@@ -139,18 +139,18 @@ tools:
         - password
         - database
   list_databases:
-    description: "List all accessible databases"
+    description: "List all databases"
     parameters:
       properties: {}
   list_tables:
-    description: "List all tables in a database"
+    description: "List all tables"
     parameters:
       properties:
         database:
           type: string
           description: "Database name"
   describe_table:
-    description: "Show the schema for a table"
+    description: "Show table schema"
     parameters:
       properties:
         table:
@@ -162,12 +162,12 @@ tools:
       required:
         - table
   execute_query:
-    description: "Execute a read-only SQL query"
+    description: "Execute SQL query"
     parameters:
       properties:
         query:
           type: string
-          description: "SQL query (SELECT, SHOW, DESCRIBE only)"
+          description: "SQL query"
         database:
           type: string
           description: "Database name"
