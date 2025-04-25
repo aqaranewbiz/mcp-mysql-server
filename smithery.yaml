@@ -1,6 +1,6 @@
 # Smithery configuration file for MySQL MCP Server
 name: "mysql-mcp-python-server"
-description: "A MySQL MCP server that provides secure read-only access to MySQL databases"
+description: "MySQL MCP server for secure database access"
 version: "1.0.0"
 logo: "./logo.png"
 
@@ -48,26 +48,20 @@ startCommand:
       mysqlHost:
         type: string
         description: "MySQL host address"
-        pattern: "^[a-zA-Z0-9.-]+$"
       mysqlPort:
         type: integer
         description: "MySQL port number"
         default: 3306
-        minimum: 1
-        maximum: 65535
       mysqlUser:
         type: string
         description: "MySQL username"
-        minLength: 1
       mysqlPassword:
         type: string
         description: "MySQL password"
         format: password
-        minLength: 1
       mysqlDatabase:
         type: string
         description: "Database name (optional)"
-        pattern: "^[a-zA-Z0-9_-]*$"
     required:
       - mysqlHost
       - mysqlUser
@@ -78,7 +72,7 @@ startCommand:
       args: ["mcp_server.py"],
       env: {
         MYSQL_HOST: config.mysqlHost,
-        MYSQL_PORT: config.mysqlPort.toString(),
+        MYSQL_PORT: String(config.mysqlPort || 3306),
         MYSQL_USER: config.mysqlUser,
         MYSQL_PASSWORD: config.mysqlPassword,
         MYSQL_DATABASE: config.mysqlDatabase || ""
@@ -154,7 +148,7 @@ tools:
       properties:
         database:
           type: string
-          description: "Database name (optional)"
+          description: "Database name"
   describe_table:
     description: "Show the schema for a table"
     parameters:
@@ -164,7 +158,7 @@ tools:
           description: "Table name"
         database:
           type: string
-          description: "Database name (optional)"
+          description: "Database name"
       required:
         - table
   execute_query:
@@ -176,7 +170,7 @@ tools:
           description: "SQL query (SELECT, SHOW, DESCRIBE only)"
         database:
           type: string
-          description: "Database name (optional)"
+          description: "Database name"
       required:
         - query
 
