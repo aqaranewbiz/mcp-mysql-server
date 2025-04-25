@@ -98,10 +98,19 @@ deployment:
     type: "http"
     path: "/health"
     port: 14000
-    timeout: 30
+    interval: "30s"
+    timeout: "30s"
+    retries: 3
   resources:
     memory: "512Mi"
     cpu: "0.5"
+  env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    - name: PYTHONPATH
+      value: "/app"
+  ports:
+    - 14000
   websocket:
     enabled: true
     reconnect: true
